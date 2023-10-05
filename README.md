@@ -14,6 +14,8 @@ To use do `podman run -id -p 8000:8000 vluz/node-umi-gossip-run:latest`
 
 <hr>
 
+### Manual Instructions
+
 Have podman (or docker) available. if on Windows, install podman desktop.       
 If you have docker instead of padman, just replace all the `podman` in commands for `docker`
 
