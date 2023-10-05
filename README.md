@@ -1,141 +1,64 @@
-# Gossip 1.0
+# A clone of gossip (https://github.com/gossip-ink/gossip) to be built via container.
 
-Gossip is an online user interface to efficiently author and delivery beautiful and enlightening presentations. If you are in China, you can try it [here](https://pearmini.gitee.io/gossip/), otherwise [here](https://pearmini.github.io/gossip/). Please use Chrome, Firefox, or Safari for a better experience.
+### Very hacky way of getting gossip to run locally in a container.
 
-There is a view in [**Sapiens: A Brief History of Humankind**](https://en.wikipedia.org/wiki/Sapiens:_A_Brief_History_of_Humankind) that the ability to tell and share stories makes humans far more strong than animals because stories allow us to trust strangers which led to large-scale cooperation.
+Made to help a user, I'll keep it here with a copy of the instructions.
 
-Presentation is an excellent way of telling and sharing stories, and gossip is one of the favorite kinds of stories that we talk about any time. Therefore, I name the software as **Gossip** to build a tool that enables users to produce and convey stories more efficiently and conveniently.
+<hr>
 
-**Make your next presentation not a presentation.**
+Have podman (or docker) available. if on Windows, install podman desktop.       
+If you have docker instead of padman, just replace all the `podman` in commands for `docker`
 
-![edit mode](./screenshots/edit_mode.png)
+<hr>
 
-![word cloud](./screenshots/screening_mode.png)
+Open a command prompt and do     
+`podman pull widhaprasa/node-umi:10.23.0-alpine3.11`
 
-## Getting started
+Wait for image to download.
 
-There is a [tutorial in Chinese](./docs/tutorials.zh-CN.md) to help you with all the techniques you need to know to create and deliver presentations by Gossip. And there is an upcoming tutorial in English.
+`podman run -it -p 8000:8000 widhaprasa/node-umi:10.23.0-alpine3.11 sh`
 
-## Why bother?
+You should get a shell like this: `/ # `
 
-Gossip is inspired by [impress.js](https://github.com/impress/impress.js). Although impress.js is impressive, it is also hard to use because you must code... In the meantime, existing tools to author and delivery presentation do have some problems which can't be ignored.
+`cd /root` to go to to home dir
 
-### Hard to author a presentation
+Git is needed so do     
+`apk add --no-cache git`
 
-On the one hand, existing tools make the authors pay more attention to the graphics design of each slide, rather than the efficiency of transmitting information and the whole structure of the presentation.
+`git clone https://github.com/vluz/gossip.git` gets you my version already built
 
-The presenter ultimately has to decide what information will be included in the presentation, **how that information will be organized, and how to best turn that organization into a story for the target audience.**
+(if you prefer to clone this rep instead, you'll have to enter `umi build` after the yarn command below)
 
-### Hard to deliver a presentation
+`cd gossip`
 
-On the other hand, it is difficult for existing tools to provide the audience more context to hold their interest during delivering presentations, such as the individual slides relate to one another or how they fit into the larger structure of the presentation.
+`yarn`
 
-As a result, **they are often inadequate in helping presenter communicate the structure of a presentation to the audience.**
+Wait for packages to install, takes a bit.
 
-Next, there is an introduction to the workflow of Gossip which will show what makes Gossip unique.
+`umi dev` raises a dev server running on port 8000
 
-## Author a presentation
+Point your browser at `http://127.0.0.1:8000/`          
+If all went ok you should see gossip running.
 
-Past research analyzed several models of authoring text and identified four common components in these models including **generating**, **organizing**, **composing**, **revising**. The process of authoring presentation is very similar to authoring text, only it includes images and other multimedia elements. So Gossip is designed according to the four components.
+Test around see if all is ok.
 
-### Generating: Idea
+Ctrl+C will stop the server and `exit` will get you out of the shell.
 
-**The generating component is where ideas are collected and recorded.** These ideas can come from the author's introspection or external sources.
+To make your changes permanent and not having to go trough all this again do:        
 
-When using traditional presentation software, there's no place for presenters to collect and record ideas, they must use other related software to do so. But there is an *Idea panel* in Gossip where users can collect and record scattered ideas at the first stage of creating a presentation.
+`podman ps -a`
 
-![Idea panel](./screenshots/idea.png)
+Find the image you've just worked on, and note it's name or container ID         
 
-Ideas can be text, image, or even code.
+To commit to a new local image do:        
 
-![Idea pre](./screenshots/idea.gif)
+`podman commit CONTAINER_NAME_OR_ID node-umi-gossip`          
+For example in my case it was `podman commit 8b472ad8987b node-umi-gossip`
 
-### Organizing: Outline and Thumbnails
+When you need it, run like this:       
+`podman run -id -p 8000:8000 localhost/node-umi-gossip sh -c "cd /root/gossip&&umi dev"`
 
-**The organizing component involves making decisions about abstractions and ordering leading to hierarchical and linear structures.**
+<hr>
 
-Most tools allow presenters to organize slides in a linear fashion, which is hard to understand or change the latent hierarchical relations among them. Some tools enable users to order hierarchical structures, such as [Keynote](https://www.apple.com/keynote/) or [Prezi](https://prezi.com/), but they are still not good enough.
+Hope it helps someone run this lovely app
 
-In Gossip, there is an *Outline panel* to help presenters to make a clear hierarchy efficiently. Also a *Thumbnail panel* is provided to preview the whole presentation.
-
-<img src="./screenshots/outline.png" height="300px">&emsp;<img src="./screenshots/thumbnail.png" height="300px">
-
-In the *Outline panel*, when the presenter creates a new point node, Gossip will automatically create a slide for it. And users can simply drag a node to modify the linear order or hierarchical structure of the presentation rather than dragging many nodes for a slight change.
-
-![outline](./screenshots/outline.gif)
-
-### Composing: Main and Element
-
-**In the composing stage, the author takes the structure developed in the generating and organization stages and turns it into an actual usable product.**
-
-At this stage, it often requires a lot of drag and aligns operations to set the right position or size of each element (text, image, etc.) which is very time-consuming and annoying. This is because there are no constraints between elements which means users have to layout every element manually.
-
-But it is possible to add constraints for elements according to the logical structure, so Gossip allows the user to organize elements in a hierarchical structure in the *Element panel* and changes there will be reflected in the *Maini panel*.
-
-<img src="./screenshots/element.png" height="300px">
-
-With the help of **[CSS Flexible Box Layout](https://en.wikipedia.org/wiki/CSS_Flexible_Box_Layout)**, Gossip provides the *container* element to manage other elements, such as texts, images, container, etc. Users can add elements to the container and specify their arrangement(horizontal or vertical) and proportion(1:1 or 1:3).
-
-One of the main advantages is that for each element, Gossip will automatically set the proper position or size of it according to its container's styles(padding, direction, etc.) and the other elements in that container. The other one is that users can operate a group of elements rather than just one each time.
-
-![element](./screenshots/element.gif)
-
-### Revising: Style and Variable
-
-**Lastly, the revision stage involves reviewing the work, adding new ideas, and fixing inconsistencies with the original organization.**
-
-The features introduced above already have shown that it is pretty easy to add, delete, edit each slide, and adjust the structure of the whole presentation in Gossip. Those are related to the content of the presentation, but there is also a need to make change styles easy. To solve this problem, Gossip offers a *Style* and *Variable panel* to presenters.
-
-<img src="./screenshots/style.png" height="300px">&emsp;<img src="./screenshots/variable.png" height="300px">
-
-For those elements which tend to have the same or similar styles, such as the font color of highlight texts or the font size of the title, Gossip enables the user to create a variable and assign to these elements. **When the user changes the value of that variable, Gossip will change the value of those related elements as well!**
-
-![variable](./screenshots/variable.gif)
-
-## Delivery a presentation
-
-To hold the audience's interests and help the presenter communicate the structure of a presentation to the audience, Gossip uses some cool but meaningful switch animation and a *Word Cloud* mode for the overview.
-
-### Switch animation: Zoom in, Zoom out, Rotate
-
-The *Zoom in animation* will remind the audience of a big point to a small point. And *Zoom out animation* is for a small point to a big point. If the two points are at the same level, it will be the *Rotate animation*.
-
-<img src="./screenshots/zoom_in.gif" width="220px">&emsp;<img src="./screenshots/zoom_out.gif" width="220px">&emsp;<img src="./screenshots/rotate.gif" width="220px">
-
-### Overview: Word Cloud mode
-
-*Word Cloud* mode uses a traditional word cloud algorithm to layout each slide. As a result, the audience can quickly familiarize or review the general content of the entire presentation. It is also helpful when the audience asks the presenter a question about a specific slide because the presenter needn't scroll the mouse wheel to find the specific slide.
-
-![overview](./screenshots/overview.gif)
-
-## Limitations
-
-There are some limitations in Gossip now.
-
-- Outline is not flexible enough.
-- Variables are not easy enough to use.
-- Layout method is not convent enough.
-- No support for animation, template, shortcuts, redo, undo, etc.
-- The context provided during delivery is not enough.
-- Word cloud mode has some problems.
-
-## Future works
-
-- Solve the problems mentioned above.
-- Design a better UI.
-
-## Contributing
-
-Gossip 1.0 is just a course project at the beginning, we need your support and advice to improve the code and features of it.
-
-If you like Gossip, not only can you give it a star, you can also do the following things.
-
-- Join [Telegram](https://t.me/joinchat/S4-TmBwTcGFnmSYM0gxsdw) to discuss.
-- Give us the slides you made by Gossip and we will display some of them.
-- Fill out the [questionnaire](https://www.wjx.cn/jq/77277467.aspx).
-  
-## Tech stack
-
-- [React](https://reactjs.org/)
-- [umi@2.x](https://v2.umijs.org/)
-- [antd@3.x](https://3x.ant.design/)
