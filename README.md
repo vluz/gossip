@@ -4,7 +4,13 @@
 
 Made to help a user, I'll keep it here with a copy of the instructions.
 
-TODO: Build a proper solution istead of this hack.
+<hr>
+
+Image published to Docker Hub at:
+
+https://hub.docker.com/r/vluz/node-umi-gossip-run
+
+To use do `podman run -id -p 8000:8000 vluz/node-umi-gossip-run:latest`
 
 <hr>
 
