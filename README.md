@@ -1,4 +1,4 @@
-# A clone of gossip (https://github.com/gossip-ink/gossip) to be built via container.
+# A clone of gossip (https://github.com/gossip-ink/gossip) built to a container.
 
 ### Very hacky way of getting gossip to run locally in a container.
 
