@@ -4,6 +4,8 @@
 
 Made to help a user, I'll keep it here with a copy of the instructions.
 
+TODO: Build a proper solution istead of this hack.
+
 <hr>
 
 Have podman (or docker) available. if on Windows, install podman desktop.       
